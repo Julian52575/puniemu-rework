@@ -71,4 +71,4 @@ Available recipes:
     - (`nix-shell`) `just up`, let just (and nix) do the heavy lifting 
     - By using the docker-compose.yml to build the puniemu server and postgresql database at the same time
     - Manually using `dotnet run` and postgres
-
+3. The server will be accesible at `localhost:8080`
