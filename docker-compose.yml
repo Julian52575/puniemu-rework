@@ -11,7 +11,7 @@ services:
     volumes:
       - "${DOCKER_SOCKET}:/var/run/docker.sock:ro"
     ports:
-      - "5555:5555"
+      - "80:5555"
       - "8080:8080"
 
   postgres:
@@ -36,7 +36,7 @@ services:
 
   puniemu:
     build: .
-    #ports:
+    #ports: Now handled by Traefik
     #  - "8080:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
