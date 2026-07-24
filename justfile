@@ -11,7 +11,7 @@ help:
     echo "Using {{CONTAINER_TOOL}}, {{CONTAINER_NAME}} {{IMAGE_NAME}}"
 
 up:
-    {{CONTAINER_TOOL}} compose up --build -d
+    {{CONTAINER_TOOL}} compose up --build
 
 down:
     {{CONTAINER_TOOL}} stop {{CONTAINER_NAME}}

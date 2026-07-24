@@ -60,6 +60,8 @@ pkgs.mkShellNoCC {
       [storage.options]
       mount_program = \"$(which fuse-overlayfs)\"
     " > $CONTAINERS_STORAGE_CONF
+    export DOCKER_HOST=unix://$(podman info --format '{{.Host.RemoteSocket.Path}}')
+    export DOCKER_SOCKET=/run/user/1000/podman/podman.sock
     echo "Done setting up podman config..." | lolcat
 
     echo "Welcome to Globuland's wib wob reloaded !" | lolcat
