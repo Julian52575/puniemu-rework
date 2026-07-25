@@ -1,0 +1,56 @@
+services:
+  
+  traefik:
+    image: traefik:v3.7.8
+
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:5555"
+    volumes:
+      - "${DOCKER_SOCKET}:/var/run/docker.sock:ro"
+    ports:
+      - "80:5555"
+      - "8080:8080"
+
+  postgres:
+    image: postgres:17
+
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+    ports:
+      - "${POSTGRES_PORT}:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  puniemu:
+    build: .
+    #ports: Now handled by Traefik
+    #  - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+
+      PostgresConnectionString: "Host=${POSTGRES_HOST};Port=${POSTGRES_PORT};Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      IsWibWob: "True"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`${SERVER_HOST}`)" #
+      - "traefik.http.routers.whoami.entrypoints=web"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      traefik:
+
+volumes:
+  postgres_data:
